@@ -22,7 +22,7 @@ subscriptions _ =
 
 init : ( BackendModel, Cmd BackendMsg )
 init =
-    ( { message = "Hello from backend!" }
+    ( { message = "Hello from backend!", messages = [] }
     , Cmd.none
     )
 
@@ -34,7 +34,7 @@ update msg model =
             ( model, Cmd.none )
 
         ClientConnected sessionId clientId ->
-            ( model, L.sendToFrontend clientId (ReceiveMessageFromBackend model.message) )
+            ( model, L.sendToFrontend clientId (ReceiveMessageFromBackend model.messages) )
 
 
 updateFromFrontend : SessionId -> ClientId -> ToBackend -> BackendModel -> ( BackendModel, Cmd BackendMsg )
@@ -44,6 +44,6 @@ updateFromFrontend sessionId clientId msg model =
             ( model, Cmd.none )
 
         ChangeMessageToBackend newValue ->
-            ( { model | message = newValue }
-            , Lamdera.broadcast (ReceiveMessageFromBackend newValue)
+            ( { model | message = newValue, messages = newValue :: model.messages }
+            , Lamdera.broadcast (ReceiveMessageFromBackend (newValue :: model.messages))
             )
