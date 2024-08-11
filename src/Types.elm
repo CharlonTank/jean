@@ -9,11 +9,13 @@ import Url exposing (Url)
 type alias FrontendModel =
     { key : Key
     , message : String
+    , messages : List String
     }
 
 
 type alias BackendModel =
     { message : String
+    , messages : List String
     }
 
 
@@ -27,6 +29,7 @@ type FrontendMsg
 type ToBackend
     = NoOpToBackend
     | ChangeMessageToBackend String
+    | SendMessageToBackend String
 
 
 type BackendMsg
@@ -36,4 +39,4 @@ type BackendMsg
 
 type ToFrontend
     = NoOpToFrontend
-    | ReceiveMessageFromBackend String
+    | ReceiveMessageFromBackend (List String)

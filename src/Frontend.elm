@@ -2,7 +2,7 @@ module Frontend exposing (..)
 
 import Browser exposing (UrlRequest(..))
 import Browser.Navigation as Nav
-import Element exposing (layout, text)
+import Element exposing (layout, text, column)
 import Element.Input as Input
 import L
 import Lamdera
@@ -26,6 +26,7 @@ init : Url.Url -> Nav.Key -> ( FrontendModel, Cmd FrontendMsg )
 init url key =
     ( { key = key
       , message = "Welcome to Lamdera! You're looking at the auto-generated base implementation. Check out src/Frontend.elm to start coding!"
+      , messages = []
       }
     , Cmd.none
     )
@@ -57,6 +58,11 @@ update msg model =
             , L.sendToBackend (ChangeMessageToBackend newValue)
             )
 
+        SendMessageToBackend newMessage ->
+            ( { model | message = "" }
+            , L.sendToBackend (SendMessageToBackend newMessage)
+            )
+
 
 updateFromBackend : ToFrontend -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg )
 updateFromBackend msg model =
@@ -64,8 +70,8 @@ updateFromBackend msg model =
         NoOpToFrontend ->
             ( model, Cmd.none )
 
-        ReceiveMessageFromBackend newMessage ->
-            ( { model | message = newMessage }
+        ReceiveMessageFromBackend newMessages ->
+            ( { model | messages = newMessages }
             , Cmd.none
             )
 
@@ -75,12 +81,17 @@ view model =
     { title = "SITE WEB"
     , body =
         [ layout []
-            (Input.text []
-                { onChange = ChangeMessage
-                , text = model.message
-                , placeholder = Nothing
-                , label = Input.labelAbove [] (text "input")
-                }
+            (column []
+                [ Input.text []
+                    { onChange = ChangeMessage
+                    , text = model.message
+                    , placeholder = Nothing
+                    , label = Input.labelAbove [] (text "input")
+                    }
+                , Input.button [ Input.onPress (SendMessageToBackend model.message) ] (text "Send")
+                , column []
+                    (List.map (\msg -> text msg) model.messages)
+                ]
             )
         ]
     }
