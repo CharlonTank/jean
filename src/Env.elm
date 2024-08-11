@@ -10,23 +10,3 @@ dummyConfigItem =
 
 adminPassword =
     "admin"
-
-
-googleAppClientSecret : String
-googleAppClientSecret =
-    ""
-
-
-githubAppClientId : String
-githubAppClientId =
-    ""
-
-
-googleAppClientId : String
-googleAppClientId =
-    ""
-
-
-githubAppClientSecret : String
-githubAppClientSecret =
-    ""
